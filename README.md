@@ -1,4 +1,4 @@
-# Ash Calc App
+# Ash Calc App ![CI](https://github.com/fffff-i/ash-calc-app/actions/workflows/ci.yml/badge.svg)
 
 **アッシュテイル ～風の大陸～** 向けのダメージ計算・攻撃指数可視化ツール。
 Rust + WebAssembly による計算ロジック（`core/`）と、今後追加予定のフロントエンド（`web/`）で構成されたモノレポです。
