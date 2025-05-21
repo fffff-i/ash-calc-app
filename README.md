@@ -20,13 +20,14 @@ ash-calc-app/
 
 ---
 
-## 🚀 開発用コマンド（要：just, wasm-pack）
+## 🚀 開発用コマンド（要：cargo, npm）
 
 ### 初期セットアップ
 
 ```bash
 cargo install just
-npm install -g wasm-pack
+cargo install wasm-pack
+cd web && npm install
 ```
 
 ### Rust のビルド（WASM出力）
