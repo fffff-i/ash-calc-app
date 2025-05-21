@@ -1,61 +1,82 @@
 <!DOCTYPE html>
 <html lang="ja">
+
 <head>
-    <meta charset="UTF-8" />
-    <title>AshCalc Test</title>
+  <meta charset="UTF-8" />
+  <title>Ash Calc App</title>
 </head>
+
 <body>
-<h1>AshTale Damage Calculator</h1>
-<button id="calc">計算</button>
-<pre id="expected" style="border:1px solid #ccc;padding:10px;margin-top:1em"></pre>
-<pre id="crit" style="border:1px solid #ccc;padding:10px;margin-top:1em"></pre>
-<pre id="non_crit" style="border:1px solid #ccc;padding:10px;margin-top:1em"></pre>
+  <script type="module" src="/src/main.ts"></script>
+  <div class="p-4 space-y-4">
+    <h2 class="text-2xl font-bold">アッシュテイル攻撃指数計算ツール</h2>
 
-<script type="module">
-    import init, { calc_damage_verbose_js, get_skill_list } from "../core/pkg";
+    <div class="grid gap-4 md:grid-cols-3">
+      <!-- プレイヤーのステータス -->
+      <fieldset class="border p-4 rounded">
+        <legend class="font-bold mb-2">プレイヤーのステータス</legend>
+        <label>攻撃力: <input id="atk" type="number" class="border p-1 w-full" value="300000" /></label>
+        <label>攻撃倍率(%): <input id="atk_bonus" type="number" class="border p-1 w-full" value="100.0" /></label>
+        <label>威圧: <input id="intimidation" type="number" class="border p-1 w-full" value="0.0" /></label>
+        <label>威圧倍率(%): <input id="intimidation_rate" type="number" class="border p-1 w-full" value="0.0"
+            step="0.1" /></label>
+        <label>ダメージ倍率: <input id="damage_ratio" type="number" class="border p-1 w-full" value="1.00" /></label>
+        <label>会心率(%): <input id="crit_rate" type="number" class="border p-1 w-full" value="100.0" /></label>
+        <label>会心ダメージ(%): <input id="crit_damage_ratio" type="number" class="border p-1 w-full" value="200.0" /></label>
+        <label>スキル与ダメUP(%): <input id="skill_bonus_rate" type="number" class="border p-1 w-full" value="0.0" /></label>
+        <label>防御無視(%): <input id="def_penetration_rate" type="number" class="border p-1 w-full"
+            value="100.0" /></label>
+        <label>対状態異常与ダメ(%): <input id="bad_condition_bonus_rate" type="number" class="border p-1 w-full"
+            value="100.0" /></label>
+        <label>対ボス与ダメ(%): <input id="vs_boss_ratio" type="number" class="border p-1 w-full" value="100.0" /></label>
+        <label>対魔物与ダメ(%): <input id="vs_monster_ratio" type="number" class="border p-1 w-full" value="100.0" /></label>
+        <label>対高HP与ダメ(%): <input id="hp_high_bonus_rate" type="number" class="border p-1 w-full"
+            value="100.0" /></label>
+        <label>対低HP与ダメ(%): <input id="hp_low_bonus_rate" type="number" class="border p-1 w-full"
+            value="100.0" /></label>
+      </fieldset>
 
-    async function main() {
-        await init();
+      <!-- 敵のステータス -->
+      <fieldset class="border p-4 rounded">
+        <legend class="font-bold mb-2">相手のステータス</legend>
+        <label>防御力: <input id="target_def" type="number" class="border p-1 w-full" value="500000" /></label>
+        <label>防御倍率(%): <input id="target_def_ratio" type="number" class="border p-1 w-full" value="100.0" /></label>
+        <label>不屈: <input id="target_fortitude" type="number" class="border p-1 w-full" value="0.0" /></label>
+        <label>会心率耐性(%): <input id="target_crit_resist_rate" type="number" class="border p-1 w-full"
+            value="0.0" /></label>
+        <label>会心ダメ耐性(%): <input id="target_crit_damage_resist_rate" type="number" class="border p-1 w-full"
+            value="0.0" /></label>
+        <label>対高低HPダメ耐性(%): <input id="target_hp_bonus_resist_rate" type="number" class="border p-1 w-full"
+            value="0.0" /></label>
 
-        const params = {
-            atk: 45000,
-            enemy_def: 3600,
-            enemy_def_rate: 1.5,
-            ignore_def_rate: 1.0,
-            intimidation: 100,
-            fortitude: 20,
-            damage_amp: 1.0,
-            abnormal_bonus: 0.0,
-            hp_high_bonus: 0.1,
-            hp_low_bonus: 0.0,
-            skill_bonus: 0.0,
-            boss_bonus: 0.5,
-            monster_bonus: 0.0,
-            crit_rate: 3.0,
-            enemy_crit_resist: 0.0,
-            crit_damage: 5.0,
-            is_boss: true,
-            is_high_hp: true,
-            is_abnormal: false
-        };
+        <label class="flex items-center space-x-2 mt-2">
+          <input type="checkbox" id="target_is_boss" class="form-checkbox" />
+          <span>相手はボス</span>
+        </label>
+        <label class="flex items-center space-x-2">
+          <input type="checkbox" id="target_is_high_hp" class="form-checkbox" />
+          <span>相手HPは50%以上</span>
+        </label>
+        <label class="flex items-center space-x-2">
+          <input type="checkbox" id="target_has_bad_condition" class="form-checkbox" />
+          <span>相手は状態異常中</span>
+        </label>
+      </fieldset>
 
-        const skills = [
-            { id: "fate_spell", additional_level: 10 }
-        ];
+      <!-- 計算結果 -->
+      <fieldset class="border p-4 rounded">
+        <legend class="font-bold mb-2">計算結果</legend>
+        <div id="result" class="mt-6"></div>
+      </fieldset>
+    </div>
 
-        document.getElementById("calc").onclick = () => {
-            const breakdown = calc_damage_verbose_js(params, skills);
-            console.log(breakdown);
-            document.getElementById("expected").textContent = `Expected: ${breakdown.expected_damage}`;
-            document.getElementById("crit").textContent = `Crit: ${breakdown.crit}`;
-            document.getElementById("non_crit").textContent = `Non-Crit: ${breakdown.non_crit}`;
-        };
+    <div>
+      <button id="calc-button" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+        計算
+      </button>
+    </div>
 
-        // 確認用スキル一覧ログ
-        console.log("Skills:", get_skill_list());
-    }
-
-    main();
-</script>
+  </div>
 </body>
+
 </html>

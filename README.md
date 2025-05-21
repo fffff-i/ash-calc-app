@@ -1,7 +1,15 @@
 # Ash Calc App ![CI](https://github.com/fffff-i/ash-calc-app/actions/workflows/ci.yml/badge.svg)
 
-**アッシュテイル ～風の大陸～** 向けのダメージ計算・攻撃指数可視化ツール。
-Rust + WebAssembly による計算ロジック（`core/`）と、今後追加予定のフロントエンド（`web/`）で構成されたモノレポです。
+アッシュテイル向けの攻撃指数計算Webアプリケーション。
+Rust + WebAssembly + TypeScript構成で、攻撃/防御ステータス・状態異常・スキル効果などを考慮した期待値を出力します。
+
+## 🛠 技術スタック
+
+| レイヤ     | 技術                              |
+|---------|---------------------------------|
+| フロントエンド | Vite + TypeScript + TailwindCSS |
+| バックエンド  | Rust + wasm-pack                |
+| 開発支援    | just (タスクランナー)                  |
 
 ---
 
@@ -9,62 +17,88 @@ Rust + WebAssembly による計算ロジック（`core/`）と、今後追加予
 
 ```
 ash-calc-app/
-├── core/          # Rust製計算エンジン（wasm-pack対象）
+├── .github/
+│   └── workflows/         # GitHub Actions用CI設定 (ci.yml)
+├── core/                  # Rust (WASMビルド対象)
 │   ├── src/
-│   ├── pkg/       # wasm出力（.gitignore済）
-│   └── Cargo.toml
-├── web/           # （予定）TypeScript + Vite フロントエンド
-├── justfile       # 共通ビルド・起動スクリプト（Rust用）
+│   │   ├── types/         # パラメータ/値の型定義
+│   │   │   ├── mod.rs
+│   │   │   ├── params.rs
+│   │   │   └── value.rs
+│   │   ├── calc.rs        # ダメージ計算ロジック
+│   │   ├── lib.rs         # wasm_bindgenエントリポイント
+│   │   └── skill.rs       # スキルデータと補正
+│   ├── Cargo.toml
+├── web/                   # フロントエンド (Vite)
+│   ├── src/
+│   │   ├── pkg/           # wasm-pack出力（Copy済）
+│   │   ├── main.ts
+│   │   ├── style.css
+│   │   └── vite-env.d.ts
+│   ├── index.html
+│   ├── package.json
+│   ├── package-lock.json
+│   ├── tsconfig.json
+│   └── vite.config.ts
+├── justfile               # ビルド/サーバ起動タスク
 └── README.md
 ```
 
 ---
 
-## 🚀 開発用コマンド（要：cargo, npm）
+## 🚀 開発手順
 
-### 初期セットアップ
+### 事前準備
 
-```bash
+- Rust toolchain
+- Node.js
+
+### 初回セットアップ
+
+```sh
 cargo install just
 cargo install wasm-pack
 cd web && npm install
 ```
 
-### Rust のビルド（WASM出力）
+### 開発ビルド・起動
 
-```bash
-just build-core
+```sh
+just start-dev
 ```
 
-### Rust のテスト実行
+内部では以下が実行されます：
 
-```bash
-just test-core
-```
-
-※ フロントエンドの構成は今後検討予定です。
+1. `core/` 内の Rust ソースを WebAssembly にビルド
+2. 生成された `pkg` を `web/src/pkg` にコピー
+3. Vite 開発サーバーを起動（[http://localhost:5173）](http://localhost:5173）)
 
 ---
 
-## 🧩 公開API（JSから呼び出し）
+## 💡 使用方法
 
-| 関数名                                          | 説明                   |
-| -------------------------------------------- | -------------------- |
-| `calc_damage_with_skills_js(params, skills)` | 通常の最終ダメージ計算          |
-| `calc_damage_verbose_js(params, skills)`     | 補足情報付き（非会心・会心・期待値など） |
-| `get_skill_list()`                           | スキル選択UI用のマスターデータ取得   |
+画面上で以下のパラメータを入力：
 
----
+* 攻撃力・攻撃倍率
+* 防御力・防御倍率・防御無視
+* 会心率・会心ダメージ
+* スキル効果（追加補正）
+* 敵状態（HP割合、状態異常、ボス/魔物）
 
-## 📦 技術構成
-
-* Rust 2024 edition + wasm-bindgen
-* wasm-pack
-* just（コマンドランナー）
-* モノレポ構成（`core/`, `web/`）
+🧮 「計算」ボタンを押すと、非会心時/会心時の攻撃指数と期待値を出力します。
+各項目に対する **ダメージ上昇率の寄与** も可視化予定です。
 
 ---
 
-## 📝 ライセンス
+## 📝 今後の展望
 
-MIT License
+* スキル選択UIの実装
+* ステータス保存/読み込み
+* ダメージ上昇率グラフ化
+* モバイルUI最適化
+
+---
+
+## ⚖️ ライセンス
+
+このリポジトリには公式ゲームの素材やデータは含まれておらず、純粋な計算ツールです。ゲーム運営・開発元とは一切関係ありません。
