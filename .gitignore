@@ -1,0 +1,16 @@
+target/
+**/*.rs.bk
+Cargo.lock
+
+# wasm-pack build outputs
+pkg/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Node
+node_modules/
+
+# idea
+.idea/
