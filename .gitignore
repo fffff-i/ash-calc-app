@@ -1,16 +1,18 @@
-target/
+# Rust build
+core/pkg/
+core/target/
+core/Cargo.lock
 **/*.rs.bk
-Cargo.lock
 
-# wasm-pack build outputs
-pkg/
+# wasm-pack output
+*.wasm
 
 # OS
 .DS_Store
 Thumbs.db
 
-# Node
-node_modules/
+# Node (if web/ uses npm)
+web/node_modules/
 
-# idea
+# .idea
 .idea/
