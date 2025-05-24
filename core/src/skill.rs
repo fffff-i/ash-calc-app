@@ -10,12 +10,18 @@ pub struct Skill {
 
 #[derive(Serialize)]
 pub struct SkillModifiers {
-    pub skill_bonus_base: f64,
-    pub skill_bonus_per_level: f64,
-    pub atk_add: u32,
-    pub crit_damage_add: f64,
-    pub boss_bonus: f64,
-    pub monster_bonus: f64,
+    skill_bonus_rate_base: f64,
+    skill_bonus_rate_per_level: f64,
+    pub atk: u32,
+    pub crit_damage_ratio: f64,
+    pub vs_boss_ratio: f64,
+    pub vs_monster_ratio: f64,
+}
+
+impl SkillModifiers {
+    pub fn skill_bonus_rate(&self, level: u8) -> f64 {
+        self.skill_bonus_rate_base + self.skill_bonus_rate_per_level * level as f64
+    }
 }
 
 pub fn skill_list() -> Vec<Skill> {
@@ -25,12 +31,12 @@ pub fn skill_list() -> Vec<Skill> {
             name: "フェイトスペル".to_string(),
             max_additional_level: 10,
             modifiers: SkillModifiers {
-                skill_bonus_base: 50.0,
-                skill_bonus_per_level: 2.0,
-                atk_add: 0,
-                crit_damage_add: 0.0,
-                boss_bonus: 0.0,
-                monster_bonus: 0.0,
+                skill_bonus_rate_base: 0.5,
+                skill_bonus_rate_per_level: 0.02,
+                atk: 0,
+                crit_damage_ratio: 0.0,
+                vs_boss_ratio: 0.0,
+                vs_monster_ratio: 0.0,
             },
         },
         Skill {
@@ -38,12 +44,12 @@ pub fn skill_list() -> Vec<Skill> {
             name: "レゾナンストーン(自)".to_string(),
             max_additional_level: 6,
             modifiers: SkillModifiers {
-                skill_bonus_base: 25.0,
-                skill_bonus_per_level: 1.0,
-                atk_add: 0,
-                crit_damage_add: 0.0,
-                boss_bonus: 0.0,
-                monster_bonus: 0.0,
+                skill_bonus_rate_base: 0.25,
+                skill_bonus_rate_per_level: 0.01,
+                atk: 0,
+                crit_damage_ratio: 0.0,
+                vs_boss_ratio: 0.0,
+                vs_monster_ratio: 0.0,
             },
         },
         Skill {
@@ -51,12 +57,12 @@ pub fn skill_list() -> Vec<Skill> {
             name: "レゾナンストーン(被)".to_string(),
             max_additional_level: 6,
             modifiers: SkillModifiers {
-                skill_bonus_base: 10.0,
-                skill_bonus_per_level: 1.0,
-                atk_add: 0,
-                crit_damage_add: 0.0,
-                boss_bonus: 0.0,
-                monster_bonus: 0.0,
+                skill_bonus_rate_base: 0.1,
+                skill_bonus_rate_per_level: 0.01,
+                atk: 0,
+                crit_damage_ratio: 0.0,
+                vs_boss_ratio: 0.0,
+                vs_monster_ratio: 0.0,
             },
         },
         Skill {
@@ -64,12 +70,12 @@ pub fn skill_list() -> Vec<Skill> {
             name: "生命ノ壺".to_string(),
             max_additional_level: 0,
             modifiers: SkillModifiers {
-                skill_bonus_base: 0.0,
-                skill_bonus_per_level: 0.0,
-                atk_add: 2000,
-                crit_damage_add: 30.0,
-                boss_bonus: 36.2,
-                monster_bonus: 36.2,
+                skill_bonus_rate_base: 0.0,
+                skill_bonus_rate_per_level: 0.0,
+                atk: 2000,
+                crit_damage_ratio: 0.30,
+                vs_boss_ratio: 0.362,
+                vs_monster_ratio: 0.362,
             },
         },
         Skill {
@@ -77,12 +83,12 @@ pub fn skill_list() -> Vec<Skill> {
             name: "流星ノ裂矢".to_string(),
             max_additional_level: 0,
             modifiers: SkillModifiers {
-                skill_bonus_base: 0.0,
-                skill_bonus_per_level: 0.0,
-                atk_add: 18000,
-                crit_damage_add: 0.0,
-                boss_bonus: 50.0,
-                monster_bonus: 50.0,
+                skill_bonus_rate_base: 0.0,
+                skill_bonus_rate_per_level: 0.0,
+                atk: 18000,
+                crit_damage_ratio: 0.0,
+                vs_boss_ratio: 0.5,
+                vs_monster_ratio: 0.5,
             },
         },
     ]

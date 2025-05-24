@@ -1,25 +1,17 @@
-# Rust WASM をビルド（出力: core/pkg）
+# Windows PowerShell をシェルとして使用
+set shell := ["powershell", "-NoProfile", "-Command"]
+
+# Rust のWASMビルド + 出力ファイルをweb/srcにコピー
 build-core:
-    cd core && wasm-pack build --target web --out-dir pkg
+    wasm-pack build core --target web --out-dir pkg --out-name ash_calc_app
+    if (!(Test-Path "web/src/pkg")) { New-Item -ItemType Directory -Path "web/src/pkg" }
+    Get-ChildItem "core/pkg" | Copy-Item -Destination "web/src/pkg" -Force
 
-# TypeScript フロントエンドを起動（Vite dev server）
-start-web:
-    cd web && npm run dev
-
-# wasm をビルドしてから Vite を起動（開発開始用）
-start:
+# localで動かす
+start-dev:
     just build-core
-    just start-web
+    cd web; npm run dev
 
-# フロントの本番ビルド（Vite）
-build-web:
-    cd web && npm run build
-
-# wasm と web をまとめて本番ビルド
-build:
-    just build-core
-    just build-web
-
-# Rust テスト（coreディレクトリのみに作用）
+# Rust のテスト実行
 test-core:
     cargo test --manifest-path core/Cargo.toml

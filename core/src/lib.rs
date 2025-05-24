@@ -5,20 +5,17 @@ mod calc;
 mod skill;
 pub mod types;
 
-use calc::{calc_damage_verbose, calc_damage_with_skills};
+use crate::calc::{calc_damage_verbose, DamageBreakdown};
 use skill::skill_list;
-use types::params::{DamageParams, SelectedSkill};
+use types::params::{DamageCalcParams, SelectedSkill};
 
 #[wasm_bindgen]
-pub fn calc_damage_with_skills_js(params: JsValue, skills: JsValue) -> f64 {
-    let params: DamageParams = from_value(params).unwrap();
-    let selected: Vec<SelectedSkill> = from_value(skills).unwrap();
-    calc_damage_with_skills(&params, &selected)
-}
+pub fn calc_damage_verbose_js(params: JsValue, selected_skills: JsValue) -> JsValue {
+    let mut base_params: DamageCalcParams = from_value(params).unwrap();
+    let skills: Vec<SelectedSkill> = from_value(selected_skills).unwrap();
 
-#[wasm_bindgen]
-pub fn calc_damage_verbose_js(params: JsValue, skills: JsValue) -> JsValue {
-    calc_damage_verbose(params, skills)
+    let breakdown: DamageBreakdown = calc_damage_verbose(&mut base_params, &skills);
+    to_value(&breakdown).unwrap()
 }
 
 #[wasm_bindgen]
