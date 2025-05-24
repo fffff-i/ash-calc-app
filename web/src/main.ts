@@ -16,11 +16,14 @@ function getParamsFromUI() {
   const getVal = (id: string) => parseFloat((document.getElementById(id) as HTMLInputElement).value);
   const getCheck = (id: string) => (document.getElementById(id) as HTMLInputElement).checked;
 
+  const rawAtk = getVal("atk") / (getVal("atk_bonus") / 100.0);
+  const rawIntimidation = getVal("intimidation") / (getVal("intimidation_rate") / 100.0 + 1.0);
+
   return {
     attacker: {
-      atk: getVal("atk"),
+      atk: rawAtk,
       def_penetration_rate: getVal("def_penetration_rate") / 100,
-      intimidation: getVal("intimidation"),
+      intimidation: rawIntimidation,
       damage_ratio: getVal("damage_ratio"),
       crit_rate: getVal("crit_rate") / 100,
       crit_damage_ratio: getVal("crit_damage_ratio") / 100,
@@ -48,6 +51,7 @@ function getParamsFromUI() {
 function displayResult(breakdown: any) {
   const container = document.getElementById("result")!;
   const pct = (val: number) => `${(val * 100).toFixed(1)}%`;
+  const fixed1 = (val: number) => val.toFixed(1);
 
   container.innerHTML = `
       <ul class="list-disc pl-5 space-y-1">
@@ -61,6 +65,17 @@ function displayResult(breakdown: any) {
       高低異常枠合計: ${pct(breakdown.total_bonus_rate)}<br>
       有効防御率: ${pct(breakdown.effective_def_ratio)}<br>
       最終防御力: ${breakdown.modified_def}
+    </div>
+    <div class="text-sm mt-4 p-2 bg-gray-100 rounded">
+      <h4 class="font-bold">1%あたりのダメージ上昇率:</h4>
+      <div class="grid grid-cols-2 gap-1">
+        <div>攻撃倍率: ${fixed1(breakdown.sensitivity.atk_ratio_per_percent)}%</div>
+        <div>威圧倍率: ${fixed1(breakdown.sensitivity.intimidation_ratio_per_percent)}%</div>
+        <div>会心率: ${fixed1(breakdown.sensitivity.crit_rate_per_percent)}%</div>
+        <div>会心ダメージ: ${fixed1(breakdown.sensitivity.crit_damage_ratio_per_percent)}%</div>
+        <div>高低異常枠合計: ${fixed1(breakdown.sensitivity.total_bonus_rate_per_percent)}%</div>
+        <div>対ボス/魔物与ダメ増: ${fixed1(breakdown.sensitivity.vs_boss_or_monster_ratio_per_percent)}%</div>
+      </div>
     </div>
   `;
 }
