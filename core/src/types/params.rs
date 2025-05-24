@@ -9,12 +9,14 @@ pub struct DamageCalcParams {
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct AttackerStats {
-    pub atk: u32,
-    pub def_penetration_rate: Percent,
-    pub intimidation: f64,
+    pub base_atk: u32,
+    pub atk_ratio: Percent,
+    pub base_intimidation: f64,
+    pub intimidation_ratio: Percent,
     pub damage_ratio: Percent,
     pub crit_rate: CritRate,
     pub crit_damage_ratio: Percent,
+    pub def_penetration_rate: Percent,
     pub bad_condition_bonus_rate: Percent,
     pub hp_high_bonus_rate: Percent,
     pub hp_low_bonus_rate: Percent,
